@@ -1020,7 +1020,7 @@
 
       /* --- Communication --- */
       #communication { padding: 70px 0 70px; }
-      #communication .section-inner { padding-left: 20px; margin-bottom: 36px; }
+      #communication .section-inner { padding-left: 20px !important; padding-right: 20px !important; margin-bottom: 36px; }
       #comm-swiper { padding: 0 20px; }
       .comm-card { width: 260px !important; }
       .comm-card-img { width: 260px; height: 180px; }
@@ -1028,15 +1028,17 @@
 
       /* --- Business --- */
       #business { padding: 70px 0 70px; }
-      #business .section-inner { padding-left: 20px; margin-bottom: 36px; }
+      #business .section-inner { padding-left: 20px !important; padding-right: 20px !important; margin-bottom: 36px; }
       #business-swiper { padding: 0 20px; }
-      .biz-slide { width: 75vw !important; min-width: unset; }
-      .biz-card-text .tit { font-size: 20px; }
-      .biz-card-text .txt { font-size: 15px; }
+      .biz-slide { width: 75vw !important; min-width: unset; display: flex; flex-direction: column; }
+      .biz-card-text { flex: 1; }
+      .biz-card-image { margin-top: auto; padding-top: 20px; }
+      .biz-card-text .tit { font-size: 18px; }
+      .biz-card-text .txt { font-size: 14px; }
 
       /* --- Solutions --- */
       #solutions { padding: 70px 0 60px; }
-      #solutions .section-inner { padding-left: 20px; margin-bottom: 36px; }
+      #solutions .section-inner { padding-left: 20px !important; padding-right: 20px !important; margin-bottom: 36px; }
       #solutions-swiper { padding: 12px 20px 0 20px; }
       #solutions-swiper .swiper-slide { width: 80vw !important; min-width: unset; }
       .sol-slide { min-height: unset; }
@@ -1048,7 +1050,7 @@
 
       /* --- Core Tech --- */
       #core-tech { padding: 70px 0 0; }
-      #core-tech .section-inner { padding-left: 20px; margin-bottom: 36px; }
+      #core-tech .section-inner { padding-left: 20px !important; padding-right: 20px !important; margin-bottom: 36px; }
       .core-esg-row { flex-direction: column; }
       .core-esg-card { height: 220px; }
       .core-esg-title { font-size: 20px; }
