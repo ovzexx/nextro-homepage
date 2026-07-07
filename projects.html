@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>프로젝트 — NEXTRO AI Solutions</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --color-primary: #05507d;
+      --color-deep: #002236;
+      --color-bg: #f2f6f8;
+      --color-header-scrolled: #dfebf3;
+      --color-footer: #f4f4f4;
+      --color-gold: #ffb116;
+      --font: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, sans-serif;
+      --ui-gnb-height: 80px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font); overflow-x: hidden; }
+    a { text-decoration: none; color: inherit; }
+    button { border: none; background: none; font-family: var(--font); cursor: pointer; }
+    img { display: block; max-width: 100%; }
+
+    /* ===================== HEADER ===================== */
+    #header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--ui-gnb-height);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      padding: 0 50px;
+      background: var(--color-header-scrolled);
+    }
+
+    .header-left { width: 200px; }
+    .header-center { flex: 1; display: flex; justify-content: center; }
+    .header-right { width: 200px; display: flex; justify-content: flex-end; align-items: center; gap: 12px; }
+
+    .site-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo-sym { height: 34px; width: auto; display: block; }
+    .logo-txt { font-size: 18px; font-weight: 700; color: #002236; letter-spacing: -0.02em; }
+
+    .btn-hamburger {
+      width: 62px; height: 62px;
+      border-radius: 62px;
+      border: 1px solid #b3b3b3;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      gap: 6px;
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+    .btn-hamburger span {
+      width: 22px; height: 2px;
+      background: #000;
+      display: block;
+    }
+    .btn-hamburger:hover {
+      background: #005689;
+      border-color: #005689;
+    }
+    .btn-hamburger:hover span { background: #fff; }
+
+    .lang-switch { display: flex; align-items: center; gap: 8px; }
+    .lang-btn {
+      font-size: 16px;
+      color: #222; font-family: var(--font);
+    }
+    .lang-btn.active { font-weight: 700; }
+    .lang-btn:not(.active) { opacity: 0.5; }
+    .lang-sep { color: #222; opacity: 0.4; font-size: 14px; }
+
+    /* ===================== SITE MAP OVERLAY ===================== */
+    #site-map {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      overflow-y: auto;
+      background: linear-gradient(135deg, #002236 0%, #005689 60%, #002f4e 100%);
+      visibility: hidden;
+      opacity: 0;
+      transition: visibility 0.7s cubic-bezier(0.33, 1, 0.68, 1), opacity 0.7s cubic-bezier(0.33, 1, 0.68, 1);
+    }
+    #site-map.open { visibility: visible; opacity: 1; }
+
+    .site-map-inner {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 45px 50px 80px;
+    }
+
+    .site-map-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 64px;
+    }
+
+    .btn-close-map {
+      width: 62px; height: 62px;
+      border-radius: 62px;
+      border: 1px solid rgba(255,255,255,0.5);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      color: #fff; font-size: 28px; line-height: 1;
+      transition: background 0.3s ease;
+    }
+    .btn-close-map:hover { background: rgba(255,255,255,0.1); }
+
+    .site-map-nav {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 40px;
+      padding-bottom: 48px;
+      margin-bottom: 32px;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .depth-1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #fff;
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+      display: inline-block;
+      position: relative;
+    }
+    .depth-1::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 0; height: 2px;
+      background: #fff;
+      transition: width 0.5s ease;
+    }
+    .depth-1:hover::after { width: 100%; }
+
+    .depth-2-list { display: flex; flex-direction: column; gap: 16px; }
+    .depth-2 {
+      font-size: 20px;
+      font-weight: 400;
+      color: #fff;
+      opacity: 0.6;
+      position: relative;
+      display: inline-block;
+      transition: opacity 0.3s ease;
+    }
+    .depth-2::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0;
+      width: 0; height: 1px;
+      background: #fff;
+      transition: width 0.3s ease;
+    }
+    .depth-2:hover { opacity: 1; }
+    .depth-2:hover::after { width: 100%; }
+
+    /* ===================== PAGE HERO ===================== */
+    .page-hero {
+      padding-top: var(--ui-gnb-height);
+      height: 500px;
+      background: linear-gradient(135deg, #002236 0%, #05507d 100%);
+      display: flex;
+      align-items: center;
+    }
+
+    .page-hero-inner {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 0 50px;
+      color: #fff;
+    }
+
+    .page-hero-label {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 20px;
+    }
+
+    .page-hero-headline {
+      font-size: 44px;
+      font-weight: 800;
+      line-height: 1.25;
+      white-space: pre-line;
+      margin-bottom: 20px;
+    }
+
+    .page-hero-sub {
+      font-size: 18px;
+      color: rgba(255,255,255,0.75);
+      line-height: 1.6;
+      max-width: 640px;
+    }
+
+    /* ===================== PROJECT SECTIONS ===================== */
+    .proj-section {
+      padding: 100px 0;
+    }
+
+    .proj-section-white { background: #fff; }
+    .proj-section-gray { background: var(--color-bg); }
+
+    .proj-section-inner {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 0 50px;
+      display: flex;
+      align-items: center;
+      gap: 80px;
+    }
+
+    .proj-section-inner.reverse { flex-direction: row-reverse; }
+
+    .proj-text { flex: 1; min-width: 0; }
+
+    .proj-image {
+      flex: 0 0 540px;
+    }
+
+    .proj-image img {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+
+    .proj-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .proj-tag {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 5px 12px;
+      border-radius: 2px;
+    }
+
+    .proj-tag-blue {
+      background: var(--color-primary);
+      color: #fff;
+    }
+
+    .proj-tag-outline {
+      background: transparent;
+      border: 1.5px solid var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    .proj-title {
+      font-size: 34px;
+      font-weight: 800;
+      color: var(--color-deep);
+      line-height: 1.25;
+      white-space: pre-line;
+      margin-bottom: 18px;
+    }
+
+    .proj-desc {
+      font-size: 16px;
+      color: #4a6070;
+      line-height: 1.8;
+      margin-bottom: 32px;
+    }
+
+    .proj-outcomes {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .proj-outcome-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 15px;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .proj-outcome-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      flex-shrink: 0;
+    }
+
+    .proj-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-top: 28px;
+      border-top: 1px solid #e8ecef;
+    }
+
+    .proj-meta-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .proj-meta-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #888;
+      width: 80px;
+      flex-shrink: 0;
+      letter-spacing: 0.03em;
+    }
+
+    .proj-meta-value {
+      font-size: 14px;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .proj-tech-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .proj-tech-badge {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-primary);
+      background: rgba(5, 80, 125, 0.08);
+      padding: 3px 10px;
+      border-radius: 12px;
+    }
+
+    /* ===================== CLIENTS SECTION ===================== */
+    #clients {
+      background: var(--color-deep);
+      padding: 100px 0;
+    }
+
+    .clients-inner {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 0 50px;
+    }
+
+    .clients-label {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 16px;
+    }
+
+    .clients-title {
+      font-size: 38px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 56px;
+    }
+
+    .clients-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .client-card {
+      background: #fff;
+      border-radius: 4px;
+      padding: 28px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--color-primary);
+      min-height: 80px;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    .client-card:hover {
+      background: var(--color-primary);
+      color: #fff;
+    }
+
+    /* ===================== CTA SECTION ===================== */
+    #cta {
+      background: var(--color-primary);
+      padding: 80px 50px;
+      text-align: center;
+    }
+
+    .cta-title {
+      font-size: 34px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 32px;
+    }
+
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 48px;
+      height: 56px;
+      background: #fff;
+      color: var(--color-primary);
+      font-size: 16px;
+      font-weight: 700;
+      border-radius: 2px;
+      transition: background 0.25s ease, color 0.25s ease;
+      font-family: var(--font);
+      text-decoration: none;
+    }
+
+    .cta-btn:hover {
+      background: var(--color-deep);
+      color: #fff;
+    }
+
+    /* ===================== FOOTER ===================== */
+    #footer { background: var(--color-footer); }
+
+    .footer-menu {
+      padding: 64px 50px 48px;
+      border-bottom: 1px solid #d4d4d4;
+      display: flex;
+      align-items: flex-start;
+      max-width: 1920px;
+      margin: 0 auto;
+    }
+
+    .footer-logo { margin-right: 134px; flex-shrink: 0; }
+    .footer-logo img { height: 32px; width: auto; }
+
+    .footer-nav { display: flex; gap: 0; flex: 1; }
+
+    .footer-nav-col {
+      border-left: 1px solid #dfdfdf;
+      padding: 0 80px 0 32px;
+    }
+    .footer-nav-col h4 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .footer-nav-links { display: flex; flex-direction: column; gap: 12px; }
+    .footer-nav-links a {
+      font-size: 15px;
+      color: #666;
+      transition: color 0.2s ease;
+    }
+    .footer-nav-links a:hover { color: var(--color-primary); }
+
+    .footer-sns {
+      margin-left: auto;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      padding-top: 4px;
+    }
+
+    .sns-btn {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: #ccc;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      text-decoration: none;
+      transition: background 0.2s ease;
+    }
+    .sns-btn:hover { background: var(--color-primary); }
+
+    .footer-info {
+      padding: 48px 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      max-width: 1920px;
+      margin: 0 auto;
+    }
+
+    .footer-info-left p { font-size: 16px; color: #666; line-height: 1.8; }
+    .footer-info-left .company-name { font-size: 18px; font-weight: 700; color: #333; margin-bottom: 8px; }
+
+    .footer-info-right { text-align: right; }
+    .footer-links { display: flex; gap: 16px; justify-content: flex-end; margin-bottom: 12px; }
+    .footer-links a { font-size: 16px; color: #666; transition: color 0.2s ease; }
+    .footer-links a:hover { color: var(--color-primary); }
+    .footer-links a:first-child { font-weight: 700; color: #333; }
+    .footer-copy { font-size: 14px; color: #999; margin-top: 8px; }
+
+    /* ===================== RESPONSIVE ===================== */
+    @media (max-width: 1100px) {
+      .proj-image { flex: 0 0 400px; }
+      .proj-section-inner { gap: 50px; }
+    }
+
+    @media (max-width: 768px) {
+      #header { padding: 0 24px; }
+
+      .page-hero-headline { font-size: 28px; }
+      .page-hero-sub { font-size: 15px; }
+      .page-hero-inner { padding: 0 24px; }
+
+      .proj-section { padding: 64px 0; }
+      .proj-section-inner,
+      .proj-section-inner.reverse {
+        flex-direction: column;
+        padding: 0 24px;
+        gap: 40px;
+      }
+      .proj-image { flex: none; width: 100%; }
+      .proj-title { font-size: 26px; }
+
+      .clients-grid { grid-template-columns: repeat(2, 1fr); }
+      .clients-inner { padding: 0 24px; }
+
+      #cta { padding: 60px 24px; }
+      .cta-title { font-size: 24px; }
+
+      .site-map-nav { grid-template-columns: repeat(2, 1fr); }
+
+      .footer-menu { flex-direction: column; gap: 32px; padding: 48px 24px 32px; }
+      .footer-logo { margin-right: 0; }
+      .footer-nav { flex-direction: column; gap: 0; }
+      .footer-nav-col { padding: 16px 0 16px 20px; }
+      .footer-info { flex-direction: column; gap: 32px; padding: 32px 24px; }
+      .footer-info-right { text-align: left; }
+      .footer-links { justify-content: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===================== HEADER ===================== -->
+  <header id="header" class="scrolled">
+    <div class="header-left">
+      <a href="index.html" class="site-logo">
+        <img class="logo-sym" src="https://nextrocorp.kr/assets/logo.png" alt="NEXTRO">
+        <span class="logo-txt">Nextro</span>
+      </a>
+    </div>
+    <div class="header-center">
+      <button class="btn-hamburger scrolled-burger" id="btn-open-map" aria-label="메뉴 열기">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="header-right">
+      <div class="lang-switch">
+        <button class="lang-btn active" style="color:#222;">KO</button>
+        <span class="lang-sep" style="color:#222;opacity:0.4;">|</span>
+        <button class="lang-btn" style="color:#222;">EN</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================== SITE MAP OVERLAY ===================== -->
+  <div id="site-map" role="dialog" aria-modal="true" aria-label="전체 메뉴">
+    <div class="site-map-inner">
+      <div class="site-map-header">
+        <div class="site-map-logo">
+          <a href="index.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+            <img src="https://nextrocorp.kr/assets/logo.png" alt="NEXTRO" style="height:34px;width:auto;display:block;filter:brightness(0)invert(1);">
+            <span style="font-size:18px;font-weight:700;color:#fff;letter-spacing:-0.02em;">Nextro</span>
+          </a>
+        </div>
+        <button class="btn-close-map" id="btn-close-map" aria-label="메뉴 닫기">&#215;</button>
+      </div>
+
+      <nav class="site-map-nav">
+        <div class="nav-col">
+          <a href="about.html" class="depth-1">회사소개</a>
+          <div class="depth-2-list">
+            <a href="about.html#overview" class="depth-2">회사 개요</a>
+            <a href="about.html#mission" class="depth-2">미션 &amp; 비전</a>
+            <a href="about.html#values" class="depth-2">핵심 가치</a>
+          </div>
+        </div>
+        <div class="nav-col">
+          <a href="solutions.html" class="depth-1">솔루션</a>
+          <div class="depth-2-list">
+            <a href="solutions.html#aim" class="depth-2">AIM 예지보전</a>
+            <a href="solutions.html#ecovision" class="depth-2">EcoVision AI</a>
+            <a href="solutions.html#applemove" class="depth-2">어플무브</a>
+            <a href="solutions.html#custom" class="depth-2">맞춤형 AI</a>
+          </div>
+        </div>
+        <div class="nav-col">
+          <a href="projects.html" class="depth-1">프로젝트</a>
+          <div class="depth-2-list">
+            <a href="projects.html#coal" class="depth-2">석탄미분기 Roll Tire 예지보전</a>
+            <a href="projects.html#singleat" class="depth-2">싱그릿 (Singleat)</a>
+            <a href="projects.html#insideup" class="depth-2">인사이드업 (Inside Up)</a>
+          </div>
+        </div>
+        <div class="nav-col">
+          <a href="research.html" class="depth-1">연구</a>
+          <div class="depth-2-list">
+            <a href="research.html#projects" class="depth-2">연구 프로젝트</a>
+            <a href="research.html#papers" class="depth-2">논문 발표</a>
+            <a href="research.html#area" class="depth-2">연구 분야</a>
+          </div>
+        </div>
+        <div class="nav-col">
+          <a href="contact.html" class="depth-1">문의</a>
+          <div class="depth-2-list">
+            <a href="contact.html#inquiry" class="depth-2">도입 문의</a>
+            <a href="contact.html#partnership" class="depth-2">파트너십</a>
+            <a href="contact.html#careers" class="depth-2">채용</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </div>
+
+  <!-- ===================== PAGE HERO ===================== -->
+  <section class="page-hero">
+    <div class="page-hero-inner">
+      <p class="page-hero-label" data-aos="fade-up" data-aos-duration="600">PROJECTS</p>
+      <h1 class="page-hero-headline" data-aos="fade-up" data-aos-duration="700" data-aos-delay="100">NEXTRO의 AI 기술이
+실제 현장에서 만들어낸 성과</h1>
+      <p class="page-hero-sub" data-aos="fade-up" data-aos-duration="700" data-aos-delay="200">한국중부발전, 두산에너빌리티 등 주요 고객사와 함께한 실제 프로젝트를 소개합니다.</p>
+    </div>
+  </section>
+
+  <!-- ===================== 한국중부발전 석탄미분기 볼타이어 수명예측 ===================== -->
+  <section id="coal" class="proj-section proj-section-white">
+    <div class="proj-section-inner">
+      <div class="proj-text" data-aos="fade-up" data-aos-duration="700" data-aos-delay="150">
+        <div class="proj-tags">
+          <span class="proj-tag proj-tag-blue">발전·에너지</span>
+          <span class="proj-tag proj-tag-outline">예지보전 AI</span>
+          <span class="proj-tag proj-tag-outline">디지털트윈</span>
+        </div>
+        <h2 class="proj-title">한국중부발전
+석탄미분기 볼타이어 수명예측 및 운영지원 솔루션 개발</h2>
+        <p class="proj-desc">데이터를 기반으로 볼타이어 상태를 진단하고 남은 수명을 예측하여, 운영 의사결정을 지원합니다. 설비 운영 데이터를 실시간으로 모니터링하여 Roll Tire의 교체 시점을 사전에 예측함으로써 예상치 못한 설비 고장을 방지하고 유지보수 비용을 절감합니다.</p>
+        <div class="proj-outcomes">
+          <div class="proj-outcome-item">
+            <div class="proj-outcome-dot"></div>
+            <span>AI 모델 기반 볼타이어 잔존 수명 예측</span>
+          </div>
+          <div class="proj-outcome-item">
+            <div class="proj-outcome-dot"></div>
+            <span>운영지원 Dashboard 실시간 모니터링</span>
+          </div>
+          <div class="proj-outcome-item">
+            <div class="proj-outcome-dot"></div>
+            <span>현장실증을 통한 고장 예방 및 비용 절감</span>
+          </div>
+        </div>
+        <div class="proj-meta">
+          <div class="proj-meta-row">
+            <span class="proj-meta-label">고객사</span>
+            <span class="proj-meta-value">한국중부발전</span>
+          </div>
+          <div class="proj-meta-row">
+            <span class="proj-meta-label">적용 기술</span>
+            <div class="proj-tech-badges">
+              <span class="proj-tech-badge">수명예측 AI</span>
+              <span class="proj-tech-badge">제조AI</span>
+              <span class="proj-tech-badge">디지털트윈</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="proj-image" data-aos="fade-up" data-aos-duration="700">
+        <img src="assets/proj_main_coal.jpg" alt="한국중부발전 석탄미분기 볼타이어 수명예측">
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 국립생태원 풍력발전 조류생태관측 ===================== -->
+  <section id="eco" class="proj-section proj-section-gray">
+    <div class="proj-section-inner reverse">
+      <div class="proj-image" data-aos="fade-up" data-aos-duration="700">
+        <img src="assets/proj_small_eco.jpg" alt="국립생태원 풍력발전 조류생태관측 AI 시스템">
+      </div>
+      <div class="proj-text" data-aos="fade-up" data-aos-duration="700" data-aos-delay="150">
+        <div class="proj-tags">
+          <span class="proj-tag proj-tag-blue">환경·생태</span>
+          <span class="proj-tag proj-tag-outline">Vision AI</span>
+        </div>
+        <h2 class="proj-title">국립생태원 풍력발전 주변
+조류생태관측 AI 시스템 구축</h2>
+        <p class="proj-desc">EcoVision AI 기술을 활용하여 풍력발전 주변 야생조류를 실시간으로 탐지·분류·추적합니다. AI 기반 Vision 기술로 생태 변화를 모니터링하고 생태 데이터를 수집·분석하여 환경 영향 평가를 지원합니다.</p>
+        <div class="proj-outcomes">
+          <div class="proj-outcome-item">
+            <div class="proj-outcome-dot"></div>
+            <span>Vision AI 기반 조류 실시간 탐지 및 종류 분류</span>
+          </div>
+          <div class="proj-outcome-item">
+            <div class="proj-outcome-dot"></div>
+            <span>풍력발전 주변 생태 영향 모니터링</span>
+          </div>
+          <div class="proj-outcome-item">
+            <div class="proj-outcome-dot"></div>
+            <span>생태 데이터 기반 환경 영향 평가 리포팅</span>
+          </div>
+        </div>
+        <div class="proj-meta">
+          <div class="proj-meta-row">
+            <span class="proj-meta-label">고객사</span>
+            <span class="proj-meta-value">국립생태원</span>
+          </div>
+          <div class="proj-meta-row">
+            <span class="proj-meta-label">적용 기술</span>
+            <div class="proj-tech-badges">
+              <span class="proj-tech-badge">Vision AI</span>
+              <span class="proj-tech-badge">EcoVision AI</span>
+              <span class="proj-tech-badge">데이터 융합</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 마음건강연구소 마음무브 앱 개발 ===================== -->
+  <section id="maumove" class="proj-section proj-section-white">
+    <div class="proj-section-inner">
+      <div class="proj-text" data-aos="fade-up" data-aos-duration="700" data-aos-delay="150">
+        <div class="proj-tags">
+          <span class="proj-tag proj-tag-blue">디지털 헬스케어</span>
+          <span class="proj-tag proj-tag-outline">AI Application</span>
+        </div>
+        <h2 class="proj-title">마음건강연구소
+마음무브 디지털 헬스케어 플랫폼 앱 개발</h2>
+        <p class="proj-desc">마음무브는 마음건강연구소와 협력하여 개발한 디지털 헬스케어 앱입니다. AI 분석으로 사용자의 마음건강 상태(GooD 점수)를 자가진단하고, 개인 맞춤형 콘텐츠와 앱 기반 데이터 연계 서비스를 제공합니다.</p>
+        <div class="proj-outcomes">
+          <div class="proj-outcome-item">
+            <div class="proj-outcome-dot"></div>
+            <span>AI 기반 마음건강 자가진단 및 GooD 점수 산출</span>
+          </div>
+          <div class="proj-outcome-item">
+            <div class="proj-outcome-dot"></div>
+            <span>개인 맞춤형 웰니스 콘텐츠 추천</span>
+          </div>
+          <div class="proj-outcome-item">
+            <div class="proj-outcome-dot"></div>
+            <span>앱 기반 건강 데이터 연계 및 분석</span>
+          </div>
+        </div>
+        <div class="proj-meta">
+          <div class="proj-meta-row">
+            <span class="proj-meta-label">고객사</span>
+            <span class="proj-meta-value">마음건강연구소</span>
+          </div>
+          <div class="proj-meta-row">
+            <span class="proj-meta-label">적용 기술</span>
+            <div class="proj-tech-badges">
+              <span class="proj-tech-badge">AI Application</span>
+              <span class="proj-tech-badge">데이터 융합</span>
+              <span class="proj-tech-badge">디지털트윈</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="proj-image" data-aos="fade-up" data-aos-duration="700">
+        <img src="assets/proj_small_app.jpg" alt="마음무브 디지털 헬스케어 플랫폼">
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 영양성분 DB 기반 1인 식사제품 랭킹 플랫폼 ===================== -->
+  <section id="nutrition" class="proj-section proj-section-gray">
+    <div class="proj-section-inner reverse">
+      <div class="proj-image" data-aos="fade-up" data-aos-duration="700">
+        <img src="assets/proj_small_food.jpg" alt="영양성분 DB 기반 1인 식사제품 랭킹 플랫폼">
+      </div>
+      <div class="proj-text" data-aos="fade-up" data-aos-duration="700" data-aos-delay="150">
+        <div class="proj-tags">
+          <span class="proj-tag proj-tag-blue">데이터 플랫폼</span>
+          <span class="proj-tag proj-tag-outline">맞춤형 AI</span>
+        </div>
+        <h2 class="proj-title">영양성분 DB 기반
+1인 식사제품 랭킹 플랫폼 구축</h2>
+        <p class="proj-desc">식품의약품안전처 공공 영양성분 데이터와 자체 수집 데이터를 통합하여 1인 가구·간편식 제품의 영양균형 점수를 AI로 산출하고, 개인 맞춤형 식사 제품 랭킹 서비스를 제공하는 플랫폼입니다.</p>
+        <div class="proj-outcomes">
+          <div class="proj-outcome-item">
+            <div class="proj-outcome-dot"></div>
+            <span>공공 영양성분 DB 기반 간편식 제품 데이터 구축</span>
+          </div>
+          <div class="proj-outcome-item">
+            <div class="proj-outcome-dot"></div>
+            <span>AI 영양균형 점수 산출 및 제품 랭킹 알고리즘</span>
+          </div>
+          <div class="proj-outcome-item">
+            <div class="proj-outcome-dot"></div>
+            <span>사용자 맞춤형 식사 추천 API 서비스 제공</span>
+          </div>
+        </div>
+        <div class="proj-meta">
+          <div class="proj-meta-row">
+            <span class="proj-meta-label">분야</span>
+            <span class="proj-meta-value">데이터 플랫폼 / 식품 AI</span>
+          </div>
+          <div class="proj-meta-row">
+            <span class="proj-meta-label">적용 기술</span>
+            <div class="proj-tech-badges">
+              <span class="proj-tech-badge">맞춤형 AI</span>
+              <span class="proj-tech-badge">데이터 융합</span>
+              <span class="proj-tech-badge">추천 알고리즘</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CLIENTS ===================== -->
+  <section id="clients">
+    <div class="clients-inner">
+      <p class="clients-label" data-aos="fade-up" data-aos-duration="600">OUR CLIENTS</p>
+      <h2 class="clients-title" data-aos="fade-up" data-aos-duration="700" data-aos-delay="100">함께한 고객사</h2>
+      <div class="clients-grid" data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">
+        <div class="client-card">한국중부발전</div>
+        <div class="client-card">두산에너빌리티</div>
+        <div class="client-card">대전광역시</div>
+        <div class="client-card">ETRI</div>
+        <div class="client-card">KETI</div>
+        <div class="client-card">보건복지부</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CTA ===================== -->
+  <section id="cta">
+    <p class="cta-title" data-aos="fade-up" data-aos-duration="700">새로운 프로젝트를 함께 시작하세요</p>
+    <a href="contact.html" class="cta-btn" data-aos="fade-up" data-aos-duration="700" data-aos-delay="100">프로젝트 문의</a>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer id="footer">
+    <div class="footer-menu">
+      <div class="footer-logo">
+        <a href="index.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+          <img src="https://nextrocorp.kr/assets/logo.png" alt="NEXTRO" style="height:32px;width:auto;">
+          <span style="font-size:18px;font-weight:700;color:#002236;">Nextro</span>
+        </a>
+      </div>
+      <nav class="footer-nav">
+        <div class="footer-nav-col">
+          <h4>사이트맵</h4>
+          <div class="footer-nav-links">
+            <a href="about.html">회사소개</a>
+            <a href="solutions.html">솔루션</a>
+            <a href="projects.html">프로젝트</a>
+            <a href="research.html">연구</a>
+            <a href="contact.html">문의</a>
+          </div>
+        </div>
+        <div class="footer-nav-col">
+          <h4>고객지원</h4>
+          <div class="footer-nav-links">
+            <a href="contact.html#inquiry">도입 문의</a>
+            <a href="contact.html#partnership">파트너십</a>
+            <a href="contact.html#careers">채용안내</a>
+            <a href="#">개인정보처리방침</a>
+          </div>
+        </div>
+      </nav>
+      <div class="footer-sns">
+        <a href="#" class="sns-btn" aria-label="LinkedIn">in</a>
+      </div>
+    </div>
+    <div class="footer-info">
+      <div class="footer-info-left">
+        <p class="company-name">주식회사 넥스트로 (NEXTRO)</p>
+        <p>충남 천안시 동남구 단대로 119 보건과학관 619호</p>
+        <p>E-mail: info@nextrocorp.kr&nbsp;&nbsp;|&nbsp;&nbsp;사업자등록번호: 184-81-03624</p>
+      </div>
+      <div class="footer-info-right">
+        <div class="footer-links">
+          <a href="#">개인정보처리방침</a>
+          <a href="#">이메일무단수집거부</a>
+          <a href="contact.html#careers">채용안내</a>
+        </div>
+        <p class="footer-copy">Copyright(C) 2025 NEXTRO Corp. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===================== SCRIPTS ===================== -->
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+  <script>
+    AOS.init({ duration: 800, once: true, offset: 60 });
+
+    const siteMap = document.getElementById('site-map');
+    const btnOpen = document.getElementById('btn-open-map');
+    const btnClose = document.getElementById('btn-close-map');
+
+    btnOpen.addEventListener('click', () => siteMap.classList.add('open'));
+    btnClose.addEventListener('click', () => siteMap.classList.remove('open'));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') siteMap.classList.remove('open');
+    });
+  </script>
+</body>
+</html>

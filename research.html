@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>연구 — NEXTRO</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --color-primary: #05507d;
+      --color-deep: #002236;
+      --color-bg: #f2f6f8;
+      --color-header-scrolled: #dfebf3;
+      --color-footer: #f4f4f4;
+      --color-gold: #ffb116;
+      --font: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, sans-serif;
+      --ui-gnb-height: 80px;
+      --ease-out: cubic-bezier(0.33, 1, 0.68, 1);
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font); overflow-x: hidden; padding-top: var(--ui-gnb-height); }
+    a { text-decoration: none; color: inherit; }
+    button { border: none; background: none; font-family: var(--font); cursor: pointer; }
+    img { display: block; }
+
+    /* ===================== HEADER ===================== */
+    #header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--ui-gnb-height);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      padding: 0 50px;
+      background: var(--color-header-scrolled);
+      transition: background 0.35s ease;
+    }
+
+    .header-left { width: 200px; }
+    .header-center { flex: 1; display: flex; justify-content: center; }
+    .header-right { width: 200px; display: flex; justify-content: flex-end; align-items: center; }
+
+    .site-logo { display: flex; align-items: center; gap: 10px; }
+    .logo-sym { height: 34px; width: auto; }
+    .logo-txt { font-size: 18px; font-weight: 700; color: #002236; letter-spacing: -0.02em; }
+
+    .btn-hamburger {
+      width: 62px; height: 62px;
+      border-radius: 62px;
+      border: 1px solid #b3b3b3;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      gap: 6px;
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+    .btn-hamburger span {
+      width: 22px; height: 2px;
+      background: #000;
+      display: block;
+      transition: background 0.3s ease;
+    }
+    .btn-hamburger:hover {
+      background: #005689;
+      border-color: #005689;
+    }
+    .btn-hamburger:hover span { background: #fff; }
+
+    .lang-switch { display: flex; align-items: center; gap: 8px; }
+    .lang-btn { font-size: 16px; color: #222; font-family: var(--font); transition: opacity 0.2s; }
+    .lang-btn.active { font-weight: 700; }
+    .lang-btn:not(.active) { opacity: 0.5; }
+    .lang-sep { color: #222; opacity: 0.4; font-size: 14px; }
+
+    /* ===================== SITE MAP OVERLAY ===================== */
+    #site-map {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      overflow-y: auto;
+      background: linear-gradient(135deg, #002236 0%, #005689 60%, #002f4e 100%);
+      visibility: hidden;
+      opacity: 0;
+      transition: visibility 0.7s var(--ease-out), opacity 0.7s var(--ease-out);
+    }
+    #site-map.open { visibility: visible; opacity: 1; }
+
+    .site-map-inner {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 45px 50px 80px;
+    }
+
+    .site-map-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 64px;
+    }
+
+    .btn-close-map {
+      width: 62px; height: 62px;
+      border-radius: 62px;
+      border: 1px solid rgba(255,255,255,0.5);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 28px; line-height: 1;
+      transition: background 0.3s ease;
+    }
+    .btn-close-map:hover { background: rgba(255,255,255,0.1); }
+
+    .site-map-nav {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 40px;
+      padding-bottom: 48px;
+      margin-bottom: 32px;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .depth-1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #fff;
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+      display: inline-block;
+      position: relative;
+    }
+    .depth-1::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 0; height: 2px;
+      background: #fff;
+      transition: width 0.5s ease;
+    }
+    .depth-1:hover::after { width: 100%; }
+
+    .depth-2-list { display: flex; flex-direction: column; gap: 16px; }
+    .depth-2 {
+      font-size: 20px;
+      font-weight: 400;
+      color: #fff;
+      opacity: 0.6;
+      display: inline-block;
+      position: relative;
+      transition: opacity 0.3s ease;
+    }
+    .depth-2::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0;
+      width: 0; height: 1px;
+      background: #fff;
+      transition: width 0.3s ease;
+    }
+    .depth-2:hover { opacity: 1; }
+    .depth-2:hover::after { width: 100%; }
+
+    /* ===================== PAGE HERO ===================== */
+    .page-hero {
+      height: 500px;
+      display: flex;
+      align-items: center;
+      background: linear-gradient(135deg, #002236 0%, #05507d 100%);
+      padding: 0 50px;
+    }
+
+    .page-hero-inner { max-width: 1400px; margin: 0 auto; width: 100%; }
+
+    .page-hero-label {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 20px;
+    }
+
+    .page-hero-title {
+      font-size: 52px;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.25;
+      white-space: pre-line;
+      margin-bottom: 24px;
+    }
+
+    .page-hero-sub {
+      font-size: 18px;
+      color: rgba(255,255,255,0.75);
+      line-height: 1.7;
+      max-width: 640px;
+    }
+
+    /* ===================== SECTION COMMON ===================== */
+    .section-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 50px;
+    }
+
+    .section-label {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: var(--color-primary);
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: 40px;
+      font-weight: 800;
+      color: var(--color-deep);
+      line-height: 1.25;
+    }
+
+    .section-header { margin-bottom: 60px; }
+
+    /* ===================== RESEARCH AREA ===================== */
+    #area {
+      background: #fff;
+      padding: 100px 0;
+    }
+
+    .area-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px;
+    }
+
+    .area-card {
+      padding: 44px 40px;
+      border: 1px solid #e0eaf0;
+      border-radius: 4px;
+      transition: box-shadow 0.35s ease, transform 0.35s ease, border-color 0.35s ease;
+    }
+    .area-card:hover {
+      box-shadow: 0 16px 48px rgba(5,80,125,0.1);
+      transform: translateY(-4px);
+      border-color: var(--color-primary);
+    }
+
+    .area-card-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--color-deep);
+      margin-bottom: 16px;
+    }
+
+    .area-card-desc {
+      font-size: 16px;
+      color: #4a6070;
+      line-height: 1.75;
+      margin-bottom: 24px;
+    }
+
+    .area-keywords {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-primary);
+      letter-spacing: 0.03em;
+      line-height: 1.7;
+    }
+
+    /* ===================== PAPERS ===================== */
+    #papers {
+      background: var(--color-bg);
+      padding: 100px 0;
+    }
+
+    .papers-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .paper-card {
+      background: #fff;
+      border-radius: 4px;
+      padding: 36px 40px;
+      display: flex;
+      align-items: flex-start;
+      gap: 32px;
+      border: 1px solid #e0eaf0;
+      transition: box-shadow 0.35s ease, transform 0.35s ease, border-color 0.35s ease;
+    }
+    .paper-card:hover {
+      box-shadow: 0 12px 40px rgba(5,80,125,0.1);
+      transform: translateY(-3px);
+      border-color: var(--color-primary);
+    }
+
+    .paper-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+      min-width: 110px;
+    }
+
+    .paper-badge {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      padding: 5px 12px;
+      border-radius: 2px;
+      text-align: center;
+    }
+    .paper-badge.domestic {
+      background: var(--color-deep);
+      color: #fff;
+    }
+    .paper-badge.international {
+      background: var(--color-primary);
+      color: #fff;
+    }
+
+    .paper-year {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--color-deep);
+    }
+
+    .paper-body { flex: 1; }
+
+    .paper-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--color-deep);
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    .paper-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .paper-tag {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-primary);
+      background: rgba(5,80,125,0.07);
+      padding: 4px 12px;
+      border-radius: 2px;
+    }
+
+    /* ===================== RESEARCH PROJECTS ===================== */
+    #projects {
+      background: #fff;
+      padding: 100px 0;
+    }
+
+    .rp-list {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .rp-card {
+      padding: 44px 40px;
+      border: 1px solid #e0eaf0;
+      border-radius: 4px;
+      border-left: 5px solid var(--color-primary);
+      transition: box-shadow 0.35s ease, transform 0.35s ease;
+    }
+    .rp-card:hover {
+      box-shadow: 0 16px 48px rgba(5,80,125,0.1);
+      transform: translateY(-4px);
+    }
+
+    .rp-card-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .rp-card-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--color-deep);
+      flex: 1;
+    }
+
+    .rp-badge {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #fff;
+      background: var(--color-gold);
+      padding: 5px 14px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .rp-card-desc {
+      font-size: 16px;
+      color: #4a6070;
+      line-height: 1.75;
+      margin-bottom: 24px;
+    }
+
+    .rp-tech-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .rp-tech-tag {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-primary);
+      border: 1px solid rgba(5,80,125,0.3);
+      padding: 5px 14px;
+      border-radius: 2px;
+    }
+
+    /* ===================== PARTNERS ===================== */
+    #partners {
+      background: var(--color-deep);
+      padding: 100px 0;
+    }
+
+    .partners-header { margin-bottom: 56px; }
+    .partners-header .section-label { color: rgba(255,255,255,0.5); }
+    .partners-header .section-title { color: #fff; }
+
+    .partners-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .partner-card {
+      background: #fff;
+      border-radius: 4px;
+      padding: 28px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .partner-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+    }
+
+    .partner-name {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--color-primary);
+      line-height: 1.4;
+    }
+
+    /* ===================== CTA ===================== */
+    #cta {
+      background: var(--color-primary);
+      padding: 80px 0;
+      text-align: center;
+    }
+
+    .cta-text {
+      font-size: 32px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 36px;
+      line-height: 1.4;
+    }
+
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 56px;
+      padding: 0 40px;
+      background: #fff;
+      color: var(--color-primary);
+      font-size: 16px;
+      font-weight: 700;
+      font-family: var(--font);
+      border-radius: 0;
+      transition: background 0.3s ease, color 0.3s ease;
+      border: 2px solid #fff;
+    }
+    .cta-btn:hover {
+      background: transparent;
+      color: #fff;
+    }
+
+    /* ===================== FOOTER ===================== */
+    #footer { background: var(--color-footer); }
+
+    .footer-menu {
+      padding: 64px 50px 48px;
+      border-bottom: 1px solid #d4d4d4;
+      display: flex;
+      align-items: flex-start;
+      max-width: 1920px;
+      margin: 0 auto;
+    }
+
+    .footer-logo { margin-right: 134px; flex-shrink: 0; }
+
+    .footer-nav { display: flex; gap: 0; flex: 1; }
+
+    .footer-nav-col {
+      border-left: 1px solid #dfdfdf;
+      padding: 0 80px 0 32px;
+    }
+    .footer-nav-col h4 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .footer-nav-links { display: flex; flex-direction: column; gap: 12px; }
+    .footer-nav-links a { font-size: 15px; color: #666; transition: color 0.2s ease; }
+    .footer-nav-links a:hover { color: var(--color-primary); }
+
+    .footer-info {
+      padding: 48px 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      max-width: 1920px;
+      margin: 0 auto;
+    }
+
+    .footer-info-left p { font-size: 16px; color: #666; line-height: 1.8; }
+    .footer-info-left .company-name { font-size: 18px; font-weight: 700; color: #333; margin-bottom: 8px; }
+
+    .footer-info-right { text-align: right; }
+    .footer-links { display: flex; gap: 16px; justify-content: flex-end; margin-bottom: 12px; }
+    .footer-links a { font-size: 16px; color: #666; transition: color 0.2s ease; }
+    .footer-links a:hover { color: var(--color-primary); }
+    .footer-links a:first-child { font-weight: 700; color: #333; }
+    .footer-copy { font-size: 14px; color: #999; margin-top: 8px; }
+
+    /* ===================== RESPONSIVE ===================== */
+    @media (max-width: 1200px) {
+      .page-hero-title { font-size: 40px; }
+      .partners-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      #header { padding: 0 24px; }
+      .page-hero { padding: 0 24px; height: auto; min-height: 400px; }
+      .page-hero-title { font-size: 30px; }
+      .page-hero-sub { font-size: 15px; }
+      .section-inner { padding: 0 24px; }
+      #area, #papers, #projects, #partners { padding: 70px 0; }
+      .area-grid { grid-template-columns: 1fr; }
+      .paper-card { flex-direction: column; gap: 16px; }
+      .paper-meta { flex-direction: row; min-width: unset; }
+      .partners-grid { grid-template-columns: repeat(2, 1fr); }
+      .site-map-nav { grid-template-columns: repeat(2, 1fr); }
+      .footer-menu { flex-direction: column; gap: 32px; }
+      .footer-logo { margin-right: 0; }
+      .footer-info { flex-direction: column; gap: 32px; }
+      .footer-info-right { text-align: left; }
+      .footer-links { justify-content: flex-start; }
+      .section-title { font-size: 28px; }
+      .rp-card-header { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===================== HEADER ===================== -->
+  <header id="header" class="scrolled">
+    <div class="header-left">
+      <a href="index.html" class="site-logo">
+        <img class="logo-sym" src="https://nextrocorp.kr/assets/logo.png" alt="NEXTRO">
+        <span class="logo-txt">Nextro</span>
+      </a>
+    </div>
+    <div class="header-center">
+      <button class="btn-hamburger" id="btn-open-map" aria-label="메뉴 열기">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="header-right">
+      <div class="lang-switch">
+        <button class="lang-btn active">KO</button>
+        <span class="lang-sep">|</span>
+        <button class="lang-btn">EN</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================== SITE MAP OVERLAY ===================== -->
+  <div id="site-map" role="dialog" aria-modal="true" aria-label="전체 메뉴">
+    <div class="site-map-inner">
+      <div class="site-map-header">
+        <div class="site-map-logo">
+          <a href="index.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+            <img style="height:34px;width:auto;display:block;filter:brightness(0)invert(1);" src="https://nextrocorp.kr/assets/logo.png" alt="NEXTRO">
+            <span style="font-size:18px;font-weight:700;color:#fff;letter-spacing:-0.02em;">Nextro</span>
+          </a>
+        </div>
+        <button class="btn-close-map" id="btn-close-map" aria-label="메뉴 닫기">&#215;</button>
+      </div>
+      <nav class="site-map-nav">
+        <div class="nav-col">
+          <a href="about.html" class="depth-1">회사소개</a>
+          <div class="depth-2-list">
+            <a href="about.html#overview" class="depth-2">회사 개요</a>
+            <a href="about.html#mission" class="depth-2">미션 &amp; 비전</a>
+            <a href="about.html#values" class="depth-2">핵심 가치</a>
+          </div>
+        </div>
+        <div class="nav-col">
+          <a href="solutions.html" class="depth-1">솔루션</a>
+          <div class="depth-2-list">
+            <a href="solutions.html#aim" class="depth-2">AIM 예지보전</a>
+            <a href="solutions.html#ecovision" class="depth-2">EcoVision AI</a>
+            <a href="solutions.html#applemove" class="depth-2">어플무브</a>
+            <a href="solutions.html#custom" class="depth-2">맞춤형 AI</a>
+          </div>
+        </div>
+        <div class="nav-col">
+          <a href="projects.html" class="depth-1">프로젝트</a>
+          <div class="depth-2-list">
+            <a href="projects.html#coal" class="depth-2">석탄미분기 Roll Tire 예지보전</a>
+            <a href="projects.html#singleat" class="depth-2">싱그릿 (Singleat)</a>
+            <a href="projects.html#insideup" class="depth-2">인사이드업 (Inside Up)</a>
+          </div>
+        </div>
+        <div class="nav-col">
+          <a href="research.html" class="depth-1">연구</a>
+          <div class="depth-2-list">
+            <a href="research.html#projects" class="depth-2">연구 프로젝트</a>
+            <a href="research.html#papers" class="depth-2">논문 발표</a>
+            <a href="research.html#area" class="depth-2">연구 분야</a>
+          </div>
+        </div>
+        <div class="nav-col">
+          <a href="contact.html" class="depth-1">문의</a>
+          <div class="depth-2-list">
+            <a href="contact.html#inquiry" class="depth-2">도입 문의</a>
+            <a href="contact.html#partnership" class="depth-2">파트너십</a>
+            <a href="contact.html#careers" class="depth-2">채용</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </div>
+
+  <!-- ===================== PAGE HERO ===================== -->
+  <section class="page-hero">
+    <div class="page-hero-inner">
+      <p class="page-hero-label" data-aos="fade-up" data-aos-duration="600">R&amp;D</p>
+      <h1 class="page-hero-title" data-aos="fade-up" data-aos-duration="700" data-aos-delay="80">산업, 환경, 디지털 헬스케어&#10;데이터와 AI로 아우르는 실무형 연구</h1>
+      <p class="page-hero-sub" data-aos="fade-up" data-aos-duration="700" data-aos-delay="160">NEXTRO 연구팀은 실제 산업 현장의 문제를 해결하는 실용적 AI 연구를 수행합니다.</p>
+    </div>
+  </section>
+
+  <!-- ===================== RESEARCH AREA ===================== -->
+  <section id="area">
+    <div class="section-inner">
+      <div class="section-header" data-aos="fade-up">
+        <p class="section-label">Research Area</p>
+        <h2 class="section-title">NEXTRO 연구 분야</h2>
+      </div>
+      <div class="area-grid">
+        <div class="area-card" data-aos="fade-up" data-aos-duration="700" data-aos-delay="0">
+          <h3 class="area-card-title">예지보전 &amp; 이상탐지</h3>
+          <p class="area-card-desc">시계열 데이터 기반 설비 이상 감지 및 잔존 수명 예측 알고리즘 연구</p>
+          <p class="area-keywords">Anomaly Detection · Time-Series · Predictive Maintenance</p>
+        </div>
+        <div class="area-card" data-aos="fade-up" data-aos-duration="700" data-aos-delay="100">
+          <h3 class="area-card-title">컴퓨터 비전 &amp; 이미지 AI</h3>
+          <p class="area-card-desc">딥러닝 기반 이미지 인식, 객체 탐지, 품질 검사 자동화 연구</p>
+          <p class="area-keywords">GAN · Object Detection · Data Augmentation</p>
+        </div>
+        <div class="area-card" data-aos="fade-up" data-aos-duration="700" data-aos-delay="200">
+          <h3 class="area-card-title">최적화 &amp; 운영 연구</h3>
+          <p class="area-card-desc">메타휴리스틱, 레이아웃 최적화, 생산 공정 효율화 연구</p>
+          <p class="area-keywords">Metaheuristics · Layout Optimization · GMP</p>
+        </div>
+        <div class="area-card" data-aos="fade-up" data-aos-duration="700" data-aos-delay="300">
+          <h3 class="area-card-title">위치 측위 &amp; 실내 내비게이션</h3>
+          <p class="area-card-desc">Zigbee RSSI 기반 실내 위치 측위 및 신경망 적용 연구</p>
+          <p class="area-keywords">Indoor Localization · ANN · Zigbee</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PAPERS ===================== -->
+  <section id="papers">
+    <div class="section-inner">
+      <div class="section-header" data-aos="fade-up">
+        <p class="section-label">Publications</p>
+        <h2 class="section-title">논문 발표 현황</h2>
+      </div>
+      <div class="papers-list">
+
+        <div class="paper-card" data-aos="fade-up" data-aos-duration="700" data-aos-delay="0">
+          <div class="paper-meta">
+            <span class="paper-badge domestic">DOMESTIC</span>
+            <span class="paper-year">2025</span>
+          </div>
+          <div class="paper-body">
+            <p class="paper-title">Enhancing Object Recognition for Self-Driving Cars: Rainfall Data Generation Using CycleGAN</p>
+            <div class="paper-tags">
+              <span class="paper-tag">GAN</span>
+              <span class="paper-tag">Data Augmentation</span>
+              <span class="paper-tag">Object Detection</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="paper-card" data-aos="fade-up" data-aos-duration="700" data-aos-delay="60">
+          <div class="paper-meta">
+            <span class="paper-badge domestic">DOMESTIC</span>
+            <span class="paper-year">2025</span>
+          </div>
+          <div class="paper-body">
+            <p class="paper-title">Optimizing Facility Layout with Metaheuristics and Cleanliness</p>
+            <div class="paper-tags">
+              <span class="paper-tag">GMP</span>
+              <span class="paper-tag">Metaheuristics</span>
+              <span class="paper-tag">Layout Optimization</span>
+              <span class="paper-tag">Isolation PSO</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="paper-card" data-aos="fade-up" data-aos-duration="700" data-aos-delay="120">
+          <div class="paper-meta">
+            <span class="paper-badge domestic">DOMESTIC</span>
+            <span class="paper-year">2025</span>
+          </div>
+          <div class="paper-body">
+            <p class="paper-title">Residual Wasserstein Time-Series GAN을 활용한 시계열 데이터 이상 탐지</p>
+            <div class="paper-tags">
+              <span class="paper-tag">Anomaly Detection</span>
+              <span class="paper-tag">Time-Series</span>
+              <span class="paper-tag">Wasserstein Loss</span>
+              <span class="paper-tag">GAN</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="paper-card" data-aos="fade-up" data-aos-duration="700" data-aos-delay="180">
+          <div class="paper-meta">
+            <span class="paper-badge international">INTERNATIONAL</span>
+            <span class="paper-year">2025</span>
+          </div>
+          <div class="paper-body">
+            <p class="paper-title">A Probabilistic Approach to Overestimation by an Imperfect Inspector Subject to Random Defective Rates</p>
+            <div class="paper-tags">
+              <span class="paper-tag">Quality Control</span>
+              <span class="paper-tag">Statistical Model</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="paper-card" data-aos="fade-up" data-aos-duration="700" data-aos-delay="240">
+          <div class="paper-meta">
+            <span class="paper-badge international">INTERNATIONAL</span>
+            <span class="paper-year">2023</span>
+          </div>
+          <div class="paper-body">
+            <p class="paper-title">Artificial Neural Network for Indoor Localization Based on Progressive Subdivided Quadrant Method</p>
+            <div class="paper-tags">
+              <span class="paper-tag">Zigbee</span>
+              <span class="paper-tag">RSSI</span>
+              <span class="paper-tag">ANN</span>
+              <span class="paper-tag">B-Spline</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="paper-card" data-aos="fade-up" data-aos-duration="700" data-aos-delay="300">
+          <div class="paper-meta">
+            <span class="paper-badge domestic">DOMESTIC</span>
+            <span class="paper-year">2023</span>
+          </div>
+          <div class="paper-body">
+            <p class="paper-title">생산 공장의 창고 레이아웃 설계를 위한 분석 모델에 관한 연구</p>
+            <div class="paper-tags">
+              <span class="paper-tag">Pharmaceutical Warehouse</span>
+              <span class="paper-tag">Layout Design</span>
+              <span class="paper-tag">Inventory Optimization</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== RESEARCH PROJECTS ===================== -->
+  <section id="projects">
+    <div class="section-inner">
+      <div class="section-header" data-aos="fade-up">
+        <p class="section-label">Research Projects</p>
+        <h2 class="section-title">진행 중인 연구 프로젝트</h2>
+      </div>
+      <div class="rp-list">
+
+        <div class="rp-card" data-aos="fade-up" data-aos-duration="700" data-aos-delay="0">
+          <div class="rp-card-header">
+            <h3 class="rp-card-title">발전설비 예지보전 AI 고도화</h3>
+            <span class="rp-badge">진행 중</span>
+          </div>
+          <p class="rp-card-desc">한국중부발전과 협력하여 석탄미분기 및 발전설비의 이상 탐지·수명 예측 모델 고도화 연구</p>
+          <div class="rp-tech-tags">
+            <span class="rp-tech-tag">Predictive AI</span>
+            <span class="rp-tech-tag">Time-Series</span>
+            <span class="rp-tech-tag">Digital Twin</span>
+          </div>
+        </div>
+
+        <div class="rp-card" data-aos="fade-up" data-aos-duration="700" data-aos-delay="100">
+          <div class="rp-card-header">
+            <h3 class="rp-card-title">생태공원 환경 AI 모니터링</h3>
+            <span class="rp-badge">진행 중</span>
+          </div>
+          <p class="rp-card-desc">국립생태원 등과 협력하여 환경 센서 데이터 기반 생태 이상 탐지 및 환경 변화 예측 모델 개발</p>
+          <div class="rp-tech-tags">
+            <span class="rp-tech-tag">EcoVision AI</span>
+            <span class="rp-tech-tag">Sensor Fusion</span>
+            <span class="rp-tech-tag">Anomaly Detection</span>
+          </div>
+        </div>
+
+        <div class="rp-card" data-aos="fade-up" data-aos-duration="700" data-aos-delay="200">
+          <div class="rp-card-header">
+            <h3 class="rp-card-title">산업 현장 이미지 AI 품질 검사</h3>
+            <span class="rp-badge">진행 중</span>
+          </div>
+          <p class="rp-card-desc">딥러닝 기반 카메라 영상 분석으로 제조 공정의 불량 탐지 자동화 시스템 개발</p>
+          <div class="rp-tech-tags">
+            <span class="rp-tech-tag">Vision AI</span>
+            <span class="rp-tech-tag">Deep Learning</span>
+            <span class="rp-tech-tag">Quality Control</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PARTNERS ===================== -->
+  <section id="partners">
+    <div class="section-inner">
+      <div class="partners-header" data-aos="fade-up">
+        <p class="section-label">Collaboration</p>
+        <h2 class="section-title">연구 협력 기관</h2>
+      </div>
+      <div class="partners-grid" data-aos="fade-up" data-aos-duration="800" data-aos-delay="100">
+        <div class="partner-card">
+          <p class="partner-name">ETRI<br>한국전자통신연구원</p>
+        </div>
+        <div class="partner-card">
+          <p class="partner-name">KETI<br>한국전자기술연구원</p>
+        </div>
+        <div class="partner-card">
+          <p class="partner-name">한국중부발전</p>
+        </div>
+        <div class="partner-card">
+          <p class="partner-name">두산에너빌리티</p>
+        </div>
+        <div class="partner-card">
+          <p class="partner-name">대전광역시</p>
+        </div>
+        <div class="partner-card">
+          <p class="partner-name">보건복지부</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CTA ===================== -->
+  <section id="cta">
+    <div class="section-inner">
+      <p class="cta-text" data-aos="fade-up">공동 연구 및 기술협력을 제안하세요</p>
+      <a href="contact.html#partnership" class="cta-btn" data-aos="fade-up" data-aos-delay="80">연구 협력 문의</a>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer id="footer">
+    <div class="footer-menu">
+      <div class="footer-logo">
+        <a href="index.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+          <img src="https://nextrocorp.kr/assets/logo.png" alt="NEXTRO" style="height:32px;width:auto;display:block;">
+          <span style="font-size:18px;font-weight:700;color:#002236;letter-spacing:-0.02em;">Nextro</span>
+        </a>
+      </div>
+      <nav class="footer-nav">
+        <div class="footer-nav-col">
+          <h4>사이트맵</h4>
+          <div class="footer-nav-links">
+            <a href="about.html">회사소개</a>
+            <a href="solutions.html">솔루션</a>
+            <a href="projects.html">프로젝트</a>
+            <a href="research.html">연구</a>
+            <a href="contact.html">문의</a>
+          </div>
+        </div>
+        <div class="footer-nav-col">
+          <h4>고객지원</h4>
+          <div class="footer-nav-links">
+            <a href="contact.html#inquiry">도입 문의</a>
+            <a href="contact.html#partnership">파트너십</a>
+            <a href="contact.html#careers">채용안내</a>
+            <a href="#">개인정보처리방침</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+    <div class="footer-info">
+      <div class="footer-info-left">
+        <p class="company-name">주식회사 넥스트로 (NEXTRO)</p>
+        <p>충남 천안시 동남구 단대로 119 보건과학관 619호</p>
+        <p>E-mail: info@nextrocorp.kr&nbsp;&nbsp;|&nbsp;&nbsp;사업자등록번호: 184-81-03624</p>
+      </div>
+      <div class="footer-info-right">
+        <div class="footer-links">
+          <a href="#">개인정보처리방침</a>
+          <a href="#">이메일무단수집거부</a>
+        </div>
+        <p class="footer-copy">Copyright(C) 2025 NEXTRO Corp. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===================== SCRIPTS ===================== -->
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+  <script>
+    AOS.init({ duration: 900, once: true, offset: 60 });
+
+    const siteMap = document.getElementById('site-map');
+    document.getElementById('btn-open-map').addEventListener('click', () => siteMap.classList.add('open'));
+    document.getElementById('btn-close-map').addEventListener('click', () => siteMap.classList.remove('open'));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') siteMap.classList.remove('open');
+    });
+  </script>
+</body>
+</html>

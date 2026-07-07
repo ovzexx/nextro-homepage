@@ -1,0 +1,8 @@
+.DS_Store
+*.DS_Store
+*.mp4
+*.mov
+.vercel
+docs/
+assets/_d_*.jpg
+assets/_debug_*.jpg
